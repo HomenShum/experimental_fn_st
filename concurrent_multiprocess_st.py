@@ -4,7 +4,7 @@ import time
 import multiprocessing
 
 import streamlit as st
-
+import psutil
 
 if 'save' not in st.session_state:
     st.session_state.save = []
@@ -17,7 +17,7 @@ def task(v):
 
 
 if __name__ == '__main__':
-    jobs = [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5]
+    jobs = [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5]
     num_workers = multiprocessing.cpu_count()
     processed_jobs = []
 
@@ -46,7 +46,6 @@ if __name__ == '__main__':
                     except concurrent.futures.process.BrokenProcessPool as ex:
                         raise Exception(ex)
 
-                st.write(multiprocessing.cpu_count())
                 st.success(f'Completed in {time.time() - start_time} seconds')
                 st.write('#### Completed Jobs')
                 st.write(f'{st.session_state.save[-1]}')
@@ -73,7 +72,16 @@ if __name__ == '__main__':
                     except concurrent.futures.process.BrokenProcessPool as ex:
                         raise Exception(ex)
 
-                st.write(multiprocessing.cpu_count())
                 st.success(f'Completed in {time.time() - start_time} seconds')
                 st.write('#### Completed Jobs')
                 st.write(f'{st.session_state.save[-1]}')
+
+    st.write(multiprocessing.cpu_count())
+
+    # Get the virtual memory status
+    vm = psutil.virtual_memory()
+
+    # Print the total, available and used memory
+    st.write(f'Total memory: {vm.total / 1024**3} GB')
+    st.write(f'Available memory: {vm.available / 1024**3} GB')
+    st.write(f'Used memory: {vm.used / 1024**3} GB')
