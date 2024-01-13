@@ -77,8 +77,6 @@ if __name__ == '__main__':
                 st.write(f'{st.session_state.save[-1]}')
 
     st.write("CPU Core Count:", multiprocessing.cpu_count())
-    st.write("GPU Count:", len(psutil.Process().gpu_affinity()))
-    st.write("GPU Affinity:", psutil.Process().gpu_affinity())
     
     # Get the virtual memory status
     vm = psutil.virtual_memory()
@@ -91,7 +89,7 @@ if __name__ == '__main__':
 
 from unstructured.partition.image import partition_image
 import time
-from glob import glob
+# from glob import glob
 import ray
 from typing import List, Any, Dict
 import numpy as np
@@ -104,12 +102,15 @@ print("Starting timer... Non-Ray")
 start = time.time()
 
 # Reads all the images in the example-docs folder: mainpage_app\experimental_functions\lumiilumii messages folder-20240108
-images = glob("lumiilumii messages folder-20240108\lumiilumii messages folder\*.png")
+# images = glob("lumiilumii messages folder-20240108\lumiilumii messages folder\*.png")
+images = st.file_uploader("Upload Images", type=['png', 'jpg', 'jpeg'], accept_multiple_files=True)
+
 images_list = [img for img in images]
 
-st.image(images_list[0], width=300)
+if images_list:
+    st.image(images_list[0], width=300)
 
-print(len(images_list), "images found" + ". Time taken: ", time.time() - start)
+    print(len(images_list), "images found" + ". Time taken: ", time.time() - start)
 
 elements = []
 

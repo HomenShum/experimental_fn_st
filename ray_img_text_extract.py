@@ -82,4 +82,3 @@ final_df = final_df.sort_values('filename')
 final_df.to_csv(f'mainpage_app\experimental_functions\lumiilumii_20240108_extracted_text.csv', index=False)
 
 print("Method 5 Time taken: ", time.time() - start) # 59-63 seconds
-

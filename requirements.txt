@@ -1,7 +1,7 @@
 streamlit
 pandas
 numpy
-unstructured
+unstructured==0.11.2
 unstructured[pdf]
 unstructured[docx]
 llama_index
