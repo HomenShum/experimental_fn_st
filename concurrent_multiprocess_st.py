@@ -2,6 +2,7 @@ import concurrent.futures
 from concurrent.futures import ProcessPoolExecutor
 import time
 import multiprocessing
+import psutil
 
 import streamlit as st
 
@@ -76,7 +77,13 @@ if __name__ == '__main__':
                 st.write(f'{st.session_state.save[-1]}')
 
     st.write("CPU Core Count:", multiprocessing.cpu_count())
+    # Get the virtual memory status
+    vm = psutil.virtual_memory()
 
+    # Print the total, available and used memory
+    st.write(f'Total memory: {vm.total / 1024**3} GB')
+    st.write(f'Available memory: {vm.available / 1024**3} GB')
+    st.write(f'Used memory: {vm.used / 1024**3} GB')
 ############### Testing with streamlit + ray ############################################################################################################
 
 from unstructured.partition.image import partition_image

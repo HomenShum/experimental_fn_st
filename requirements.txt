@@ -57,7 +57,7 @@ aiofiles
 pywin32
 portalocker
 icecream
-PyMuPDF
 streamlit-antd-components
 pdfminer
 unstructured_inference
+psutil
