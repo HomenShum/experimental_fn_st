@@ -4,7 +4,6 @@ import time
 import multiprocessing
 
 import streamlit as st
-import psutil
 
 if 'save' not in st.session_state:
     st.session_state.save = []
@@ -76,12 +75,4 @@ if __name__ == '__main__':
                 st.write('#### Completed Jobs')
                 st.write(f'{st.session_state.save[-1]}')
 
-    st.write(multiprocessing.cpu_count())
-
-    # Get the virtual memory status
-    vm = psutil.virtual_memory()
-
-    # Print the total, available and used memory
-    st.write(f'Total memory: {vm.total / 1024**3} GB')
-    st.write(f'Available memory: {vm.available / 1024**3} GB')
-    st.write(f'Used memory: {vm.used / 1024**3} GB')
+    st.write("CPU Core Count:", multiprocessing.cpu_count())
