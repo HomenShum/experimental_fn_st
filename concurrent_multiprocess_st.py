@@ -96,8 +96,6 @@ import os
 from unstructured.chunking.title import chunk_by_title
 import streamlit as st
 
-ray.init()
-
 # Tracks performance of the function
 print("Starting timer... Non-Ray")
 start = time.time()
