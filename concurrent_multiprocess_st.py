@@ -46,7 +46,6 @@ if __name__ == '__main__':
                     except concurrent.futures.process.BrokenProcessPool as ex:
                         raise Exception(ex)
 
-            if len(st.session_state.save):
                 st.write(multiprocessing.cpu_count())
                 st.success(f'Completed in {time.time() - start_time} seconds')
                 st.write('#### Completed Jobs')
@@ -74,7 +73,6 @@ if __name__ == '__main__':
                     except concurrent.futures.process.BrokenProcessPool as ex:
                         raise Exception(ex)
 
-            if len(st.session_state.save):
                 st.write(multiprocessing.cpu_count())
                 st.success(f'Completed in {time.time() - start_time} seconds')
                 st.write('#### Completed Jobs')
