@@ -23,6 +23,7 @@ if __name__ == '__main__':
     start = st.button('start work')
 
     if start:
+        start_time = time.time()
         with ProcessPoolExecutor(max_workers=num_workers) as executor:
             for j in jobs:
                 pj = executor.submit(task, j)
@@ -40,5 +41,6 @@ if __name__ == '__main__':
                     raise Exception(ex)
 
     if len(st.session_state.save):
+        st.success(f'Completed in {time.time() - start_time} seconds')
         st.write('#### Completed Jobs')
         st.write(f'{st.session_state.save}')
