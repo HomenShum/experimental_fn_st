@@ -16,8 +16,8 @@ def task(v):
 
 
 if __name__ == '__main__':
-    num_workers = 9
-    jobs = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    jobs = [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    num_workers = len(jobs)
     processed_jobs = []
 
     start = st.button('start work')
