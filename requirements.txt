@@ -30,7 +30,6 @@ optimum[exporters]
 streamlit-searchbox
 scikit-learn
 sentence-transformers
-PIL
 PyMuPDF
 torchvision
 streamlit-extras
@@ -51,7 +50,6 @@ qdrant-client[fastembed]
 rank_bm25
 IPython
 scikit-learn
-PIL
 aiohttp
 aiofiles
 pywin32
@@ -61,3 +59,4 @@ streamlit-antd-components
 pdfminer
 unstructured_inference
 psutil
+pillow
