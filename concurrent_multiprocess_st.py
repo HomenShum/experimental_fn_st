@@ -77,6 +77,9 @@ if __name__ == '__main__':
                 st.write(f'{st.session_state.save[-1]}')
 
     st.write("CPU Core Count:", multiprocessing.cpu_count())
+    st.write("GPU Count:", len(psutil.Process().gpu_affinity()))
+    st.write("GPU Affinity:", psutil.Process().gpu_affinity())
+    
     # Get the virtual memory status
     vm = psutil.virtual_memory()
 
