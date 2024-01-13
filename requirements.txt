@@ -52,7 +52,6 @@ IPython
 scikit-learn
 aiohttp
 aiofiles
-pywin32
 portalocker
 icecream
 streamlit-antd-components
