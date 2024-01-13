@@ -32,7 +32,7 @@ if __name__ == '__main__':
             for future in concurrent.futures.as_completed(processed_jobs):
                 try:
                     res = future.result()
-                    st.write(f'res: {res}')
+                    # st.write(f'res: {res}')
 
                     # Incrementally save the completed task so far.
                     st.session_state.save.append(res)
