@@ -46,11 +46,11 @@ if __name__ == '__main__':
                     except concurrent.futures.process.BrokenProcessPool as ex:
                         raise Exception(ex)
 
-        if len(st.session_state.save):
-            st.write(multiprocessing.cpu_count())
-            st.success(f'Completed in {time.time() - start_time} seconds')
-            st.write('#### Completed Jobs')
-            st.write(f'{st.session_state.save[-1]}')
+            if len(st.session_state.save):
+                st.write(multiprocessing.cpu_count())
+                st.success(f'Completed in {time.time() - start_time} seconds')
+                st.write('#### Completed Jobs')
+                st.write(f'{st.session_state.save[-1]}')
 
     with col2:
 
@@ -74,8 +74,8 @@ if __name__ == '__main__':
                     except concurrent.futures.process.BrokenProcessPool as ex:
                         raise Exception(ex)
 
-        if len(st.session_state.save):
-            st.write(multiprocessing.cpu_count())
-            st.success(f'Completed in {time.time() - start_time} seconds')
-            st.write('#### Completed Jobs')
-            st.write(f'{st.session_state.save[-1]}')
+            if len(st.session_state.save):
+                st.write(multiprocessing.cpu_count())
+                st.success(f'Completed in {time.time() - start_time} seconds')
+                st.write('#### Completed Jobs')
+                st.write(f'{st.session_state.save[-1]}')
