@@ -130,7 +130,8 @@ def parse_img_file(row: Dict[str, Any]) -> Dict[str, Any]:
 
 if st.button("Run"):
     start = time.time()
-    ds = (ray.data.read_images('lumiilumii messages folder-20240108\lumiilumii messages folder', include_paths=True).map(parse_img_file))
+    # ds = (ray.data.read_images('lumiilumii messages folder-20240108\lumiilumii messages folder', include_paths=True).map(parse_img_file))
+    ds = (ray.data.read_images(images_list).map(parse_img_file))
     print(ds.take_all())
     print("Method 5 Time taken: ", time.time() - start) # 59-63 seconds
 
