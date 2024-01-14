@@ -127,6 +127,25 @@ def parse_img_file(row: Dict[str, Any]) -> Dict[str, Any]:
 
 images = st.file_uploader("Upload Images", type=['png', 'jpg', 'jpeg'], accept_multiple_files=True)
 
+# with tempfile.TemporaryDirectory() as tmp_dir:
+#     loop = asyncio.new_event_loop()
+#     asyncio.set_event_loop(loop)
+#     try:
+#         temp_files = loop.run_until_complete(main(images, tmp_dir))
+#     finally:
+#         loop.close()
+
+#     st.write("Temp folder:", temp_files, len(temp_files))
+#     st.write("Temp folder dir:", tmp_dir)
+#     elements = []
+
+#     if st.button("Run"):
+#         start = time.time()
+#         ray.init(num_cpus=multiprocessing.cpu_count(), ignore_reinit_error=True)
+#         ds = (ray.data.read_images(tmp_dir, include_paths=True).map(parse_img_file))    
+#         st.success("Method 5 Time taken: "+ str(time.time() - start)) # 59-63 seconds
+#         st.json(ds.take_all())
+
 with tempfile.TemporaryDirectory() as tmp_dir:
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
@@ -140,8 +159,20 @@ with tempfile.TemporaryDirectory() as tmp_dir:
     elements = []
 
     if st.button("Run"):
-        start = time.time()
-        ray.init(num_cpus=multiprocessing.cpu_count(), ignore_reinit_error=True)
-        ds = (ray.data.read_images(tmp_dir, include_paths=True).map(parse_img_file))    
-        st.success("Method 5 Time taken: "+ str(time.time() - start)) # 59-63 seconds
-        st.json(ds.take_all())
+        start_time = time.time()
+        num_workers = multiprocessing.cpu_count()
+        processed_jobs = []
+        with ProcessPoolExecutor(max_workers=num_workers) as executor:
+            for img_path in temp_files:
+                pj = executor.submit(parse_img_file, {'path': img_path})
+                processed_jobs.append(pj)
+
+            for future in concurrent.futures.as_completed(processed_jobs):
+                try:
+                    res = future.result()
+                    elements.append(res)
+                except concurrent.futures.process.BrokenProcessPool as ex:
+                    raise Exception(ex)
+
+        st.success(f'Completed in {time.time() - start_time} seconds')
+        st.json(elements)
