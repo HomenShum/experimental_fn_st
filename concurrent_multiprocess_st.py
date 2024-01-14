@@ -143,5 +143,5 @@ with tempfile.TemporaryDirectory() as tmp_dir:
         start = time.time()
         ray.init(num_cpus=multiprocessing.cpu_count(), ignore_reinit_error=True)
         ds = (ray.data.read_images(tmp_dir, include_paths=True).map(parse_img_file))    
-        st.success("Method 5 Time taken: ", time.time() - start) # 59-63 seconds
+        st.success("Method 5 Time taken: "+ str(time.time() - start)) # 59-63 seconds
         st.json(ds.take_all())
