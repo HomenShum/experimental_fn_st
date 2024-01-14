@@ -105,9 +105,9 @@ start = time.time()
 # images = glob("lumiilumii messages folder-20240108\lumiilumii messages folder\*.png")
 images = st.file_uploader("Upload Images", type=['png', 'jpg', 'jpeg'], accept_multiple_files=True)
 
-images_list = [img for img in images]
+if images:
+    images_list = [img for img in images]
 
-if images_list:
     st.image(images_list[0], width=300)
 
     print(len(images_list), "images found" + ". Time taken: ", time.time() - start)
