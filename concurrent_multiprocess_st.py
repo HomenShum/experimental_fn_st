@@ -18,7 +18,7 @@ def task(v):
 
 if __name__ == '__main__':
     jobs = [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5]
-    num_workers = multiprocessing.cpu_count()
+    num_workers = int(multiprocessing.cpu_count()/2)
     processed_jobs = []
 
     # 2 col
@@ -26,7 +26,7 @@ if __name__ == '__main__':
 
     with col1:
 
-        start16 = st.button('start work 16 cpus')
+        start16 = st.button(f'start work {num_workers} cpus')
 
         if start16:
             start_time = time.time()
@@ -114,16 +114,19 @@ async def main(images, tmp_dir):
 # ray.data.DataContext.get_current().execution_options.verbose_progress = True
 
 def parse_img_file(row: Dict[str, Any]) -> Dict[str, Any]:    
-    # Check if the file exists before processing it
-    row['filename'] = os.path.basename(row['path'])
-    elements = partition_image(row["path"])
-    unstructured_chunks = chunk_by_title(elements, combine_text_under_n_chars=500, max_characters=1500)
-    row["extracted_text"] = [str(chunk) for chunk in unstructured_chunks]
+    try:
+        # Check if the file exists before processing it
+        row['filename'] = os.path.basename(row['path'])
+        elements = partition_image(row["path"])
+        unstructured_chunks = chunk_by_title(elements, combine_text_under_n_chars=500, max_characters=1500)
+        row["extracted_text"] = [str(chunk) for chunk in unstructured_chunks]
 
-    result = {}
-    result['filename'] = row['filename']
-    result['extracted_text'] = row['extracted_text']
-    return result
+        result = {}
+        result['filename'] = row['filename']
+        result['extracted_text'] = row['extracted_text']
+        return result
+    except Exception as e:
+        print(f"Error processing file {row['path']}: {e}")
 
 images = st.file_uploader("Upload Images", type=['png', 'jpg', 'jpeg'], accept_multiple_files=True)
 
@@ -172,7 +175,8 @@ with tempfile.TemporaryDirectory() as tmp_dir:
                     res = future.result()
                     elements.append(res)
                 except concurrent.futures.process.BrokenProcessPool as ex:
-                    raise Exception(ex)
+                    print("A worker process was terminated abruptly. Retrying...")
+                    res = future.result()  # retry the task
 
         st.success(f'Completed in {time.time() - start_time} seconds')
         st.json(elements)
