@@ -95,30 +95,27 @@ from typing import List, Any, Dict
 import numpy as np
 import os
 from unstructured.chunking.title import chunk_by_title
+import asyncio
+import aiofiles
 import streamlit as st
+import tempfile
 
-# Tracks performance of the function
-print("Starting timer... Non-Ray")
-start = time.time()
+async def write_image_to_file(img, tmp_dir):
+    tmp_path = os.path.join(tmp_dir, img.name)
+    async with aiofiles.open(tmp_path, 'wb') as tmp_file:
+        await tmp_file.write(img.read())  # remove await before img.read()
+    return tmp_path
 
-# Reads all the images in the example-docs folder: mainpage_app\experimental_functions\lumiilumii messages folder-20240108
-# images = glob("lumiilumii messages folder-20240108\lumiilumii messages folder\*.png")
-images = st.file_uploader("Upload Images", type=['png', 'jpg', 'jpeg'], accept_multiple_files=True)
-
-if images:
-    images_list = [img for img in images]
-
-    st.image(images_list[0], width=300)
-
-    print(len(images_list), "images found" + ". Time taken: ", time.time() - start)
-
-elements = []
+async def main(images, tmp_dir):
+    tasks = [write_image_to_file(img, tmp_dir) for img in images]
+    return await asyncio.gather(*tasks)
 
 ############################## Method 5: ray with data #########################################################################################
 # ray.data.DataContext.get_current().execution_options.verbose_progress = True
-# ds = ray.data.read_images(images_list).map_batches(process_image)
-def parse_img_file(row: Dict[str, Any]) -> Dict[str, Any]:
-    row["filename"] = os.path.basename(row["path"])
+
+def parse_img_file(row: Dict[str, Any]) -> Dict[str, Any]:    
+    # Check if the file exists before processing it
+    row['filename'] = os.path.basename(row['path'])
     elements = partition_image(row["path"])
     unstructured_chunks = chunk_by_title(elements, combine_text_under_n_chars=500, max_characters=1500)
     row["extracted_text"] = [str(chunk) for chunk in unstructured_chunks]
@@ -128,11 +125,23 @@ def parse_img_file(row: Dict[str, Any]) -> Dict[str, Any]:
     result['extracted_text'] = row['extracted_text']
     return result
 
-if st.button("Run"):
-    start = time.time()
-    # ds = (ray.data.read_images('lumiilumii messages folder-20240108\lumiilumii messages folder', include_paths=True).map(parse_img_file))
-    ds = (ray.data.read_images(images_list).map(parse_img_file))
-    print(ds.take_all())
-    print("Method 5 Time taken: ", time.time() - start) # 59-63 seconds
+images = st.file_uploader("Upload Images", type=['png', 'jpg', 'jpeg'], accept_multiple_files=True)
 
-    st.json(ds.take(1))
+with tempfile.TemporaryDirectory() as tmp_dir:
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    try:
+        temp_files = loop.run_until_complete(main(images, tmp_dir))
+    finally:
+        loop.close()
+
+    st.write("Temp folder:", temp_files, len(temp_files))
+    st.write("Temp folder dir:", tmp_dir)
+    elements = []
+
+    if st.button("Run"):
+        start = time.time()
+        ds = (ray.data.read_images(tmp_dir, include_paths=True).map(parse_img_file))    
+        print(ds.take_all())
+        print("Method 5 Time taken: ", time.time() - start) # 59-63 seconds
+        st.json(ds.take_all())
